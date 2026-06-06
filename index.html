@@ -480,6 +480,136 @@
     }
     .btn-restart:hover { background: var(--surface2); border-color: var(--navy); }
 
+    /* ── ADMIN PANEL ── */
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+    }
+    .admin-title {
+      font-family: 'Cinzel', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: 1px;
+    }
+    .admin-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1.25rem;
+    }
+    .admin-search {
+      width: 100%;
+      padding: 10px 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      margin-bottom: 1rem;
+      outline: none;
+      box-shadow: var(--shadow);
+    }
+    .admin-search:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(212,175,55,.15);
+    }
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+    .admin-table th, .admin-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--surface2);
+    }
+    .admin-table th {
+      background: var(--surface2);
+      color: var(--navy);
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+    .admin-table tr:hover { background: var(--surface2); }
+    .webhook-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+    .webhook-card h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .webhook-card p {
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    .webhook-row {
+      display: flex;
+      gap: 10px;
+    }
+    .webhook-input {
+      flex: 1;
+      padding: 8px 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      outline: none;
+    }
+    .webhook-input:focus { border-color: var(--gold); }
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.2s ease;
+    }
+    .btn-sm.btn-navy {
+      background: var(--navy);
+      color: #fff;
+      border: none;
+    }
+    .btn-sm.btn-navy:hover {
+      background: var(--gold);
+      color: var(--navy);
+    }
+    .btn-sm.btn-outline {
+      background: transparent;
+      color: var(--navy);
+      border: 1px solid var(--border-md);
+    }
+    .btn-sm.btn-outline:hover {
+      background: var(--surface3);
+    }
+
     @media (max-width: 420px) {
       h1 { font-size: 22px; }
       .q-text { font-size: 19px; }
@@ -536,8 +666,14 @@
     <p class="tagline" id="intro-tagline"></p>
 
     <div class="card">
-      <label id="name-label" for="nameInput"></label>
-      <input type="text" id="nameInput" autocomplete="given-name" oninput="checkName()" />
+      <div style="margin-bottom: 1rem;">
+        <label id="name-label" for="nameInput"></label>
+        <input type="text" id="nameInput" autocomplete="given-name" oninput="checkInputs()" />
+      </div>
+      <div>
+        <label id="phone-label" for="phoneInput"></label>
+        <input type="text" id="phoneInput" autocomplete="tel" oninput="checkInputs()" />
+      </div>
     </div>
 
     <div class="instructions" id="instructions-box">
@@ -586,11 +722,70 @@
     </div>
     <div class="scores-grid" id="scoresGrid"></div>
     <div id="profileDetail"></div>
+    <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 1rem;">
+      <button class="btn-primary" id="waStudentBtn" onclick="sendWhatsApp('student')" style="background: #25D366; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 0; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);">
+        <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.455 5.703 1.456h.004c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" fill="#ffffff" />
+        </svg>
+        <span id="wa-student-label"></span>
+      </button>
+      <button class="btn-primary" id="waCoachBtn" onclick="sendWhatsApp('coach')" style="background: var(--navy); color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.455 5.703 1.456h.004c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" fill="#ffffff" />
+        </svg>
+        <span id="wa-coach-label"></span>
+      </button>
+    </div>
     <div class="result-footer">
       <img src="https://metodolap.vercel.app/logo.png" alt="Método LAP" />
       <p id="footer-text"></p>
     </div>
-    <button class="btn-restart" id="restartBtn" onclick="restart()"></button>
+    <button class="btn-restart" id="restartBtn" onclick="restart()" style="display: none;"></button>
+  </div>
+
+  <!-- ══ ADMIN ══ -->
+  <div id="screen-admin" class="screen">
+    <div class="admin-header">
+      <h2 class="admin-title">Painel do Coach</h2>
+      <button class="btn-sm btn-outline" onclick="closeAdmin()">Voltar</button>
+    </div>
+
+    <div class="webhook-card">
+      <h3>Sincronização via Webhook</h3>
+      <p>Configure uma URL de webhook (Make, Zapier, Google Sheets) para enviar automaticamente cada novo resultado concluído em tempo real.</p>
+      <div class="webhook-row">
+        <input type="text" id="webhookInput" class="webhook-input" placeholder="https://api.example.com/webhook" />
+        <button class="btn-sm btn-navy" onclick="saveWebhook()">Salvar</button>
+      </div>
+    </div>
+
+    <input type="text" id="adminSearch" class="admin-search" placeholder="Buscar aluno por nome ou perfil..." oninput="filterAdminTable()" />
+
+    <div class="admin-actions">
+      <button class="btn-sm btn-navy" onclick="exportCSV()">Exportar CSV</button>
+      <button class="btn-sm btn-outline" onclick="clearLocalTest()" style="border-color: var(--gold); color: var(--navy); margin-right: auto;">Liberar Aparelho</button>
+      <button class="btn-sm btn-outline" onclick="clearResults()" style="border-color: #f8b4b4; color: #9b1c1c;">Limpar Histórico</button>
+    </div>
+
+    <div class="table-container">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Nome</th>
+            <th>WhatsApp</th>
+            <th>Perfil Principal</th>
+            <th>D%</th>
+            <th>I%</th>
+            <th>S%</th>
+            <th>C%</th>
+          </tr>
+        </thead>
+        <tbody id="adminTableBody">
+          <!-- Dinâmico -->
+        </tbody>
+      </table>
+    </div>
   </div>
 
 </div>
@@ -603,6 +798,11 @@ const CONTENT = {
     introTagline: "Engenharia Comportamental — Método LAP",
     nameLabel: "Como você se chama?",
     namePlaceholder: "Seu nome completo",
+    phoneLabel: "Qual o seu número de WhatsApp?",
+    phonePlaceholder: "(00) 00000-0000",
+    waBtnLabel: "Enviar Resultado no WhatsApp",
+    waStudentLabel: "Enviar para meu WhatsApp",
+    waCoachLabel: "Enviar para Coach (Jocelaine)",
     instrTitle: "Como responder o teste",
     instrItems: [
       "Este teste contém 24 afirmações sobre seu comportamento e modo de agir no dia a dia.",
@@ -683,6 +883,11 @@ const CONTENT = {
     introTagline: "Ingeniería Conductual — Método LAP",
     nameLabel: "¿Cómo te llamas?",
     namePlaceholder: "Tu nombre completo",
+    phoneLabel: "¿Cuál es tu número de WhatsApp?",
+    phonePlaceholder: "+595 900 000000",
+    waBtnLabel: "Enviar Resultado por WhatsApp",
+    waStudentLabel: "Enviar a mi WhatsApp",
+    waCoachLabel: "Enviar al Coach (Jocelaine)",
     instrTitle: "Cómo responder el test",
     instrItems: [
       "Este test contiene 24 afirmaciones sobre tu comportamiento y forma de actuar en el día a día.",
@@ -759,8 +964,10 @@ const CONTENT = {
   }
 };
 
-let lang = 'pt', userName = '', currentQ = 0;
+let lang = 'pt', userName = '', userPhone = '', currentQ = 0;
 let answers = new Array(24).fill(null);
+
+const DESTAND_PHONE = "5549998401834"; // Mentora Jocelaine
 
 function setLang(l) {
   lang = l;
@@ -778,25 +985,38 @@ function renderIntro() {
   document.getElementById('intro-tagline').textContent = c.introTagline;
   document.getElementById('name-label').textContent = c.nameLabel;
   document.getElementById('nameInput').placeholder = c.namePlaceholder;
+  document.getElementById('phone-label').textContent = c.phoneLabel;
+  document.getElementById('phoneInput').placeholder = c.phonePlaceholder;
   document.getElementById('start-label').textContent = c.startLabel;
   document.getElementById('instr-title').textContent = c.instrTitle;
   document.getElementById('instr-list').innerHTML = c.instrItems.map(i => `<li>${i}</li>`).join('');
   document.getElementById('instr-scale').innerHTML = c.scaleItems.map(s =>
     `<div class="scale-item"><div class="scale-num">${s.n}</div><div class="scale-lbl">${s.l}</div></div>`
   ).join('');
-  const hasName = document.getElementById('nameInput').value.trim().length >= 2;
-  document.getElementById('instructions-box').classList.toggle('visible', hasName);
-  document.getElementById('startBtn').disabled = !hasName;
+  
+  const nameVal = document.getElementById('nameInput').value.trim();
+  const phoneVal = document.getElementById('phoneInput').value.trim();
+  const nameOk = nameVal.length >= 2;
+  const phoneOk = phoneVal.replace(/\D/g, '').length >= 8;
+  const ok = nameOk && phoneOk;
+  
+  document.getElementById('instructions-box').classList.toggle('visible', ok);
+  document.getElementById('startBtn').disabled = !ok;
 }
 
-function checkName() {
-  const ok = document.getElementById('nameInput').value.trim().length >= 2;
+function checkInputs() {
+  const nameVal = document.getElementById('nameInput').value.trim();
+  const phoneVal = document.getElementById('phoneInput').value.trim();
+  const nameOk = nameVal.length >= 2;
+  const phoneOk = phoneVal.replace(/\D/g, '').length >= 8;
+  const ok = nameOk && phoneOk;
   document.getElementById('startBtn').disabled = !ok;
   document.getElementById('instructions-box').classList.toggle('visible', ok);
 }
 
 function startQuiz() {
   userName = document.getElementById('nameInput').value.trim();
+  userPhone = document.getElementById('phoneInput').value.trim();
   currentQ = 0; answers = new Array(24).fill(null);
   showScreen('quiz'); renderQuestion();
 }
@@ -835,14 +1055,21 @@ function renderQuestion() {
 
 function selectOption(val) {
   answers[currentQ] = val;
-  document.querySelectorAll('.option-btn').forEach((b, i) => b.classList.toggle('selected', i + 1 === val));
-  document.getElementById('nextBtn').disabled = false;
+  renderQuestion();
+  setTimeout(() => {
+    nextQ();
+  }, 250);
 }
 
 function nextQ() {
   const total = CONTENT[lang].questions.length;
   if (currentQ < total - 1) { currentQ++; renderQuestion(); }
-  else { const s = calcScores(); renderResult(s); showScreen('result'); }
+  else {
+    const s = calcScores();
+    renderResult(s);
+    saveResultToDb(s);
+    showScreen('result');
+  }
 }
 
 function prevQ() {
@@ -858,12 +1085,17 @@ function calcScores() {
 
 function renderResult(scores) {
   const c = CONTENT[lang];
-  const maxScore = 6 * 4;
+  const maxScore = 24; // 6 questions * 4 max val
   const sorted = Object.entries(scores).sort((a,b) => b[1]-a[1]);
   document.getElementById('resultName').textContent = userName;
   document.getElementById('result-sub').textContent = c.resultSub;
   document.getElementById('footer-text').textContent = c.footerText;
   document.getElementById('restartBtn').textContent = c.restartLabel;
+  
+  // Set WhatsApp button translations
+  document.getElementById('wa-student-label').textContent = c.waStudentLabel;
+  document.getElementById('wa-coach-label').textContent = c.waCoachLabel;
+  
   const grid = document.getElementById('scoresGrid');
   grid.innerHTML = '';
   sorted.forEach(([dim, score], idx) => {
@@ -906,15 +1138,319 @@ function renderResult(scores) {
   `;
 }
 
+function saveResultToDb(scores) {
+  const c = CONTENT[lang];
+  const maxScore = 24;
+  const sorted = Object.entries(scores).sort((a,b) => b[1]-a[1]);
+  const [topDim] = sorted[0];
+  const p = c.profiles[topDim];
+  
+  const pctD = Math.round((scores.D / maxScore) * 100);
+  const pctI = Math.round((scores.I / maxScore) * 100);
+  const pctS = Math.round((scores.S / maxScore) * 100);
+  const pctC = Math.round((scores.C / maxScore) * 100);
+
+  const result = {
+    id: 'lap_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+    date: new Date().toLocaleString(),
+    name: userName,
+    phone: userPhone,
+    profile: p.name + ' (' + p.keyword + ')',
+    pctD, pctI, pctS, pctC,
+    rawDate: Date.now()
+  };
+
+  // 1. Save locally in localStorage
+  let saved = [];
+  try {
+    const raw = localStorage.getItem('lap_disc_results');
+    if (raw) saved = JSON.parse(raw);
+  } catch (e) { console.error(e); }
+  saved.push(result);
+  localStorage.setItem('lap_disc_results', JSON.stringify(saved));
+
+  // Save specific user result for retrieval on refresh
+  try {
+    localStorage.setItem('lap_my_result', JSON.stringify({
+      name: userName,
+      phone: userPhone,
+      scores: scores
+    }));
+  } catch (e) { console.error(e); }
+
+  // 2. Trigger Webhook in background if configured
+  const webhookUrl = localStorage.getItem('lap_disc_webhook');
+  if (webhookUrl && webhookUrl.trim().startsWith('http')) {
+    const payload = {
+      event: "disc_test_completed",
+      student: {
+        name: userName,
+        phone: userPhone
+      },
+      results: {
+        dominantProfile: p.name,
+        keyword: p.keyword,
+        scores: { D: pctD, I: pctI, S: pctS, C: pctC }
+      },
+      comments: [p.d1, p.d2, p.d3],
+      growthAdvice: p.growth,
+      completedAt: result.date
+    };
+
+    fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(r => console.log('Webhook dispatched successfully:', r.status))
+    .catch(err => console.error('Webhook dispatch failed:', err));
+  }
+}
+
+function sendWhatsApp(target) {
+  const c = CONTENT[lang];
+  const scores = calcScores();
+  const sorted = Object.entries(scores).sort((a,b) => b[1]-a[1]);
+  const [topDim] = sorted[0];
+  const p = c.profiles[topDim];
+  
+  const pctD = Math.round((scores.D / 24) * 100);
+  const pctI = Math.round((scores.I / 24) * 100);
+  const pctS = Math.round((scores.S / 24) * 100);
+  const pctC = Math.round((scores.C / 24) * 100);
+
+  // Clean user phone number (only digits)
+  const cleanUserPhone = userPhone.replace(/\D/g, '');
+  // Coach phone is DESTAND_PHONE
+  const phoneDest = target === 'student' ? cleanUserPhone : DESTAND_PHONE;
+
+  let text = "";
+  if (lang === 'pt') {
+    text = `Olá! Aqui estão os resultados do Teste DISC do Método LAP.
+
+👤 *Nome:* ${userName}
+📱 *WhatsApp:* ${userPhone}
+
+📊 *Perfil Comportamental:*
+• Dominância (D): ${pctD}%
+• Influência (I): ${pctI}%
+• Estabilidade (S): ${pctS}%
+• Conformidade (C): ${pctC}%
+
+🏆 *Perfil Principal:* ${p.name} (${p.keyword})
+
+🌟 *Características:*
+${p.traits.join(", ")}
+
+💡 *Comentários do Perfil:*
+- ${p.d1}
+- ${p.d2}
+- ${p.d3}
+
+🎯 *Conselho de Desenvolvimento:*
+${p.growth}`;
+  } else {
+    text = `¡Hola! Aquí están los resultados del Test DISC del Método LAP.
+
+👤 *Nombre:* ${userName}
+📱 *WhatsApp:* ${userPhone}
+
+📊 *Perfil Conductual:*
+• Dominancia (D): ${pctD}%
+• Influencia (I): ${pctI}%
+• Estabilidad (S): ${pctS}%
+• Conformidad (C): ${pctC}%
+
+🏆 *Perfil Principal:* ${p.name} (${p.keyword})
+
+🌟 *Características:*
+${p.traits.join(", ")}
+
+💡 *Comentarios del Perfil:*
+- ${p.d1}
+- ${p.d2}
+- ${p.d3}
+
+🎯 *Consejo de Desarrollo:*
+${p.growth}`;
+  }
+
+  const url = `https://api.whatsapp.com/send?phone=${phoneDest}&text=${encodeURIComponent(text)}`;
+  window.open(url, '_blank');
+}
+
 function restart() {
   document.getElementById('nameInput').value = '';
+  document.getElementById('phoneInput').value = '';
   document.getElementById('startBtn').disabled = true;
   document.getElementById('instructions-box').classList.remove('visible');
   answers = new Array(24).fill(null); currentQ = 0;
   showScreen('intro');
 }
 
-renderIntro();
+// ── ADMIN FUNCTIONS ──
+function checkAdminRoute() {
+  if (window.location.hash === '#admin') {
+    showScreen('admin');
+    renderAdminTable();
+    loadWebhookInput();
+  }
+}
+
+function closeAdmin() {
+  window.location.hash = '';
+  showScreen('intro');
+}
+
+function loadWebhookInput() {
+  const saved = localStorage.getItem('lap_disc_webhook') || '';
+  const input = document.getElementById('webhookInput');
+  if (input) input.value = saved;
+}
+
+function saveWebhook() {
+  const url = document.getElementById('webhookInput').value.trim();
+  localStorage.setItem('lap_disc_webhook', url);
+  alert(lang === 'pt' ? 'Webhook salvo com sucesso!' : '¡Webhook guardado con éxito!');
+}
+
+function renderAdminTable() {
+  let saved = [];
+  try {
+    const raw = localStorage.getItem('lap_disc_results');
+    if (raw) saved = JSON.parse(raw);
+  } catch(e) {}
+  
+  // Sort descending by date
+  saved.sort((a, b) => b.rawDate - a.rawDate);
+  
+  const body = document.getElementById('adminTableBody');
+  if (!body) return;
+  body.innerHTML = '';
+  
+  if (saved.length === 0) {
+    body.innerHTML = `<tr><td colspan="8" style="text-align:center; color: var(--text3); padding: 20px;">Nenhum aluno cadastrado ainda.</td></tr>`;
+    return;
+  }
+  
+  saved.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${r.date}</td>
+      <td style="font-weight: 600;">${r.name}</td>
+      <td><a href="https://wa.me/${r.phone.replace(/\D/g, '')}" target="_blank" style="color: var(--navy); text-decoration: underline;">${r.phone}</a></td>
+      <td>${r.profile}</td>
+      <td style="color: var(--red-txt); font-weight: 600;">${r.pctD}%</td>
+      <td style="color: var(--amber-txt); font-weight: 600;">${r.pctI}%</td>
+      <td style="color: var(--teal-txt); font-weight: 600;">${r.pctS}%</td>
+      <td style="color: var(--blue-txt); font-weight: 600;">${r.pctC}%</td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+function filterAdminTable() {
+  const query = document.getElementById('adminSearch').value.toLowerCase();
+  const rows = document.querySelectorAll('#adminTableBody tr');
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(query) ? '' : 'none';
+  });
+}
+
+function clearResults() {
+  const msg = lang === 'pt' 
+    ? 'Tem certeza de que deseja apagar todos os resultados dos alunos? Esta ação não pode ser desfeita.' 
+    : '¿Está seguro de que desea eliminar todos los resultados de los estudiantes? Esta acción no se puede deshacer.';
+  if (confirm(msg)) {
+    localStorage.removeItem('lap_disc_results');
+    renderAdminTable();
+  }
+}
+
+function clearLocalTest() {
+  const msg = lang === 'pt' 
+    ? 'Tem certeza de que deseja liberar este aparelho para um novo teste? O resultado anterior deste aparelho não será mais exibido ao abrir a página (mas continuará salvo no histórico).' 
+    : '¿Está seguro de que deseja liberar este dispositivo para una nueva prueba? El resultado anterior de este dispositivo ya no se mostrará al abrir la página (pero permanecerá guardado en el historial).';
+  if (confirm(msg)) {
+    localStorage.removeItem('lap_my_result');
+    closeAdmin();
+  }
+}
+
+function exportCSV() {
+  let saved = [];
+  try {
+    const raw = localStorage.getItem('lap_disc_results');
+    if (raw) saved = JSON.parse(raw);
+  } catch(e) {}
+  
+  if (saved.length === 0) {
+    alert(lang === 'pt' ? 'Não há resultados para exportar.' : 'No hay resultados para exportar.');
+    return;
+  }
+  
+  let csv = 'Data,Nome,WhatsApp,Perfil Principal,D_Pct,I_Pct,S_Pct,C_Pct\n';
+  
+  saved.forEach(r => {
+    const name = `"${r.name.replace(/"/g, '""')}"`;
+    const profile = `"${r.profile.replace(/"/g, '""')}"`;
+    csv += `${r.date},${name},${r.phone},${profile},${r.pctD},${r.pctI},${r.pctS},${r.pctC}\n`;
+  });
+  
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', `LAP_DISC_Alunos_${new Date().toISOString().slice(0,10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// Event delegation for admin dblclick on logos
+document.body.addEventListener('dblclick', (e) => {
+  if (e.target.closest('.lap-logo') || e.target.closest('.lap-logo-sm')) {
+    window.location.hash = '#admin';
+    showScreen('admin');
+    renderAdminTable();
+    loadWebhookInput();
+  }
+});
+
+function initApp() {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('reset') || urlParams.has('novo')) {
+    localStorage.removeItem('lap_my_result');
+    const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + window.location.hash;
+    window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+  }
+
+  renderIntro();
+
+  if (window.location.hash !== '#admin') {
+    const savedMyResult = localStorage.getItem('lap_my_result');
+    if (savedMyResult) {
+      try {
+        const parsed = JSON.parse(savedMyResult);
+        if (parsed && parsed.name && parsed.phone && parsed.scores) {
+          userName = parsed.name;
+          userPhone = parsed.phone;
+          renderResult(parsed.scores);
+          showScreen('result');
+          return;
+        }
+      } catch(e) { console.error(e); }
+    }
+  }
+
+  checkAdminRoute();
+}
+
+// Watch hash changes
+window.addEventListener('hashchange', checkAdminRoute);
+
+initApp();
 </script>
 </body>
 </html>
