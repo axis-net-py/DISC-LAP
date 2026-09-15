@@ -27,6 +27,29 @@ describe('scoreAssessment', () => {
     expect(scoreAssessment(Array(24).fill(4)).intensity).toEqual({ D: 100, I: 100, S: 100, C: 100 });
   });
 
+  it('normalizes the visible DISC composition to exactly 100 percent', () => {
+    const answers = ASSESSMENT_ITEMS.map((item, index) => {
+      if (item.dimension === 'D') return 4;
+      if (item.dimension === 'I') return index % 8 === 1 ? 3 : 2;
+      return item.dimension === 'S' ? 2 : 1;
+    });
+    const { composition } = scoreAssessment(answers);
+
+    expect(Object.values(composition).reduce((sum, value) => sum + value, 0)).toBe(100);
+    expect(composition.D).toBeGreaterThan(composition.I);
+    expect(composition.I).toBeGreaterThan(composition.S);
+    expect(composition.S).toBeGreaterThan(composition.C);
+  });
+
+  it('uses an equal composition when no dimension rises above the response baseline', () => {
+    expect(scoreAssessment(Array(24).fill(1)).composition).toEqual({ D: 25, I: 25, S: 25, C: 25 });
+  });
+
+  it('represents a single fully expressed dimension as the whole composition', () => {
+    const answers = ASSESSMENT_ITEMS.map((item) => item.dimension === 'D' ? 4 : 1);
+    expect(scoreAssessment(answers).composition).toEqual({ D: 100, I: 0, S: 0, C: 0 });
+  });
+
   it('scores dimensions independently using canonical item metadata', () => {
     const answers = ASSESSMENT_ITEMS.map((item) => item.dimension === 'D' ? 4 : 1);
     expect(scoreAssessment(answers)).toMatchObject({

@@ -10,7 +10,7 @@ test('participant completes a bilingual, country-aware professional assessment',
     await route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify({
       id: 'result-1',
       participant: { name: 'Ana López', phone: '+595981234567', country: 'PY' },
-      scores: { raw: { D: 18, I: 18, S: 18, C: 18 }, intensity: { D: 67, I: 67, S: 67, C: 67 }, ranking: ['D', 'I', 'S', 'C'], dominant: ['D', 'I', 'S', 'C'], isTie: true },
+      scores: { raw: { D: 18, I: 18, S: 18, C: 18 }, intensity: { D: 67, I: 67, S: 67, C: 67 }, composition: { D: 25, I: 25, S: 25, C: 25 }, ranking: ['D', 'I', 'S', 'C'], dominant: ['D', 'I', 'S', 'C'], isTie: true },
       profile: { isTie: true, primary: { code: 'D', name: 'Dominancia', label: 'Ejecutor' }, secondary: { code: 'I', name: 'Influencia', label: 'Influenciador' }, strengths: ['Decisión', 'Foco', 'Coraje'], watchOuts: ['Escucha', 'Detalles'], communication: 'Directa y objetiva.', decisionMaking: 'Rápida.', teamwork: 'Asume responsabilidad.', actions: ['Escuchar', 'Revisar riesgos'] },
       whatsappUrl: 'https://wa.me/595981234567?text=Resultado',
       completedAt: '2026-09-15T12:00:00.000Z'
@@ -33,6 +33,12 @@ test('participant completes a bilingual, country-aware professional assessment',
 
   await expect(page.getByRole('heading', { name: /tu mapa conductual/i })).toBeVisible();
   await expect(page.getByText(/empate/i)).toBeVisible();
+  await expect(page.getByText(/composición.*100%/i)).toBeVisible();
+  await expect(page.locator('#result')).toHaveAttribute('data-profile', 'D');
+  await expect(page.locator('.score-d')).toContainText('25%');
+  await expect(page.locator('.score-i')).toContainText('25%');
+  await expect(page.locator('.score-s')).toContainText('25%');
+  await expect(page.locator('.score-c')).toContainText('25%');
   await expect(page.getByRole('link', { name: /whatsapp/i })).toHaveAttribute('href', /wa\.me\/595981234567/);
 });
 

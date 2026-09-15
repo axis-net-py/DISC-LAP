@@ -22,11 +22,11 @@ export class SubmissionError extends Error {
 }
 
 function whatsappMessage(name, scores, profile, locale) {
-  const values = ['D', 'I', 'S', 'C'].map((code) => `${code}: ${scores.intensity[code]}%`).join(' · ');
+  const values = ['D', 'I', 'S', 'C'].map((code) => `${code}: ${scores.composition[code]}%`).join(' · ');
   if (locale === 'es-PY') {
-    return `Resultado DISC — Método LAP\n${name}\nPerfil principal: ${profile.primary.name}\nIntensidad: ${values}\n\nEste resultado describe tendencias conductuales y no es un diagnóstico psicológico.`;
+    return `Resultado DISC — Método LAP\n${name}\nPerfil principal: ${profile.primary.name}\nComposición: ${values}\n\nEste resultado describe tendencias conductuales y no es un diagnóstico psicológico.`;
   }
-  return `Resultado DISC — Método LAP\n${name}\nPerfil principal: ${profile.primary.name}\nIntensidade: ${values}\n\nEste resultado descreve tendências comportamentais e não é um diagnóstico psicológico.`;
+  return `Resultado DISC — Método LAP\n${name}\nPerfil principal: ${profile.primary.name}\nComposição: ${values}\n\nEste resultado descreve tendências comportamentais e não é um diagnóstico psicológico.`;
 }
 
 function publicResult(record) {

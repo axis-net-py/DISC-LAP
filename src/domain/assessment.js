@@ -15,6 +15,30 @@ export class AssessmentValidationError extends Error {
   }
 }
 
+function compositionFromRaw(raw) {
+  const expressed = Object.fromEntries(dimensions.map((dimension) => [
+    dimension,
+    raw[dimension] - 6
+  ]));
+  const total = Object.values(expressed).reduce((sum, value) => sum + value, 0);
+  if (total === 0) return { D: 25, I: 25, S: 25, C: 25 };
+
+  const exact = Object.fromEntries(dimensions.map((dimension) => [
+    dimension,
+    (expressed[dimension] / total) * 100
+  ]));
+  const composition = Object.fromEntries(dimensions.map((dimension) => [
+    dimension,
+    Math.floor(exact[dimension])
+  ]));
+  const missing = 100 - Object.values(composition).reduce((sum, value) => sum + value, 0);
+  [...dimensions]
+    .sort((left, right) => (exact[right] - composition[right]) - (exact[left] - composition[left]))
+    .slice(0, missing)
+    .forEach((dimension) => { composition[dimension] += 1; });
+  return composition;
+}
+
 export function scoreAssessment(answers) {
   if (!Array.isArray(answers) || answers.length !== ASSESSMENT_ITEMS.length) {
     throw new AssessmentValidationError('O teste exige exatamente 24 respostas.');
@@ -29,6 +53,7 @@ export function scoreAssessment(answers) {
     dimension,
     Math.round(((raw[dimension] - 6) / 18) * 100)
   ]));
+  const composition = compositionFromRaw(raw);
   const dimensionOrder = new Map(dimensions.map((dimension, index) => [dimension, index]));
   const ranking = [...dimensions].sort((left, right) =>
     raw[right] - raw[left] || dimensionOrder.get(left) - dimensionOrder.get(right)
@@ -36,7 +61,7 @@ export function scoreAssessment(answers) {
   const topScore = raw[ranking[0]];
   const dominant = ranking.filter((dimension) => raw[dimension] === topScore);
 
-  return { raw, intensity, ranking, dominant, isTie: dominant.length > 1 };
+  return { raw, intensity, composition, ranking, dominant, isTie: dominant.length > 1 };
 }
 
 export function buildProfile(scores, locale = 'pt-BR') {
