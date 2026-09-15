@@ -6,7 +6,7 @@ const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; ch
 createServer(async (request, response) => {
   try {
     const pathname = new URL(request.url, 'http://localhost').pathname;
-    const relative = pathname === '/' ? 'index.html' : pathname.replace(/^\//, '');
+    const relative = pathname === '/' ? 'index.html' : `${pathname.replace(/^\//, '')}${pathname.endsWith('/') ? 'index.html' : ''}`;
     const path = normalize(join(process.cwd(), relative));
     if (!path.startsWith(process.cwd())) throw new Error('Invalid path');
     const body = await readFile(path);
