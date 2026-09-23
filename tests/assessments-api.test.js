@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { createAssessmentService } from '../src/services/assessments.js';
 
+function balancedAnswers() {
+  return Array.from({ length: 10 }, (_, index) =>
+    index % 2 === 0 ? [4, 3, 2, 1] : [1, 2, 3, 4]
+  );
+}
+
 function validInput(overrides = {}) {
   return {
     idempotencyKey: 'test-12345678',
@@ -9,7 +15,7 @@ function validInput(overrides = {}) {
     country: 'PY',
     locale: 'es-PY',
     consent: true,
-    answers: Array(24).fill(3),
+    answers: balancedAnswers(),
     ...overrides
   };
 }
@@ -32,7 +38,7 @@ describe('assessment submission service', () => {
     const result = await service.submit(validInput());
 
     expect(result.participant).toEqual({ name: 'Ana López', phone: '+595981234567', country: 'PY' });
-    expect(result.scores.raw).toEqual({ D: 18, I: 18, S: 18, C: 18 });
+    expect(result.scores.raw).toEqual({ D: 25, I: 25, S: 25, C: 25 });
     expect(result.profile.isTie).toBe(true);
     expect(new URL(result.whatsappUrl).pathname).toBe('/595981234567');
     expect(new URL(result.whatsappUrl).searchParams.get('text')).toContain('Ana López');
@@ -56,7 +62,8 @@ describe('assessment submission service', () => {
     [{ consent: false }, 'consent'],
     [{ name: 'A' }, 'name'],
     [{ phone: '123' }, 'telefone'],
-    [{ answers: Array(23).fill(2) }, '24'],
+    [{ answers: Array(9).fill([4, 3, 2, 1]) }, '10'],
+    [{ answers: Array(10).fill([4, 4, 2, 1]) }, 'sem repetir'],
     [{ idempotencyKey: 'x' }, 'idempotency']
   ])('rejects invalid submission %o', async (override, message) => {
     const service = createAssessmentService({ repository: fakeRepository() });

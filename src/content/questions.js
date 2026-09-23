@@ -1,3 +1,46 @@
-export const questions={
-'pt-BR':['Em situações desafiadoras, tomo a iniciativa e ajo rapidamente.','Ganho energia ao socializar e construir novas relações.','Sinto-me confortável com rotinas estáveis e processos bem definidos.','Antes de decidir, analiso cuidadosamente os dados disponíveis.','Confronto situações difíceis quando isso é necessário.','Sinto-me à vontade apresentando ideias para grupos.','As pessoas me consideram alguém confiável e paciente.','Prefiro fazer bem feito, mesmo que leve mais tempo.','Gosto de ter controle sobre os resultados sob minha responsabilidade.','Entusiasmo-me com novas ideias e gosto de inspirar pessoas.','Procuro acordos que preservem a cooperação.','Percebo rapidamente quando regras ou padrões não estão sendo cumpridos.','Tomo decisões mesmo quando ainda não tenho todas as informações.','Construo relações com facilidade em diferentes grupos.','Prefiro ambientes previsíveis a mudanças constantes.','Organizo meu trabalho com etapas e critérios claros.','Aceito riscos calculados quando o objetivo vale a pena.','O reconhecimento pelo meu trabalho aumenta minha motivação.','Preciso de tempo para assimilar mudanças importantes.','Sinto desconforto ao decidir sem dados suficientes.','Vou direto ao ponto nas conversas.','Prefiro colaborar em equipe a trabalhar isoladamente.','Ambientes excessivamente agitados reduzem meu rendimento.','Busco alta qualidade e reviso detalhes antes de concluir.'],
-'es-PY':['En situaciones desafiantes, tomo la iniciativa y actúo rápidamente.','Gano energía al socializar y construir nuevas relaciones.','Me siento cómodo con rutinas estables y procesos bien definidos.','Antes de decidir, analizo cuidadosamente los datos disponibles.','Enfrento situaciones difíciles cuando es necesario.','Me siento cómodo presentando ideas ante grupos.','Las personas me consideran alguien confiable y paciente.','Prefiero hacer las cosas bien, aunque lleve más tiempo.','Me gusta tener control sobre los resultados bajo mi responsabilidad.','Me entusiasman las nuevas ideas y disfruto inspirar a otros.','Busco acuerdos que preserven la cooperación.','Detecto rápidamente cuando no se cumplen reglas o estándares.','Tomo decisiones aunque todavía no tenga toda la información.','Construyo relaciones con facilidad en diferentes grupos.','Prefiero ambientes previsibles a cambios constantes.','Organizo mi trabajo con etapas y criterios claros.','Acepto riesgos calculados cuando el objetivo vale la pena.','El reconocimiento por mi trabajo aumenta mi motivación.','Necesito tiempo para asimilar cambios importantes.','Me incomoda decidir sin datos suficientes.','Voy directo al punto en las conversaciones.','Prefiero colaborar en equipo a trabajar de manera aislada.','Los ambientes excesivamente agitados reducen mi rendimiento.','Busco alta calidad y reviso los detalles antes de terminar.']};
+// Grupos ipsativos espelhados no teste manual (PDF Jocelaine Rufatto / LAP).
+// Cada grupo = 1 linha do manual: 4 adjetivos, ordem fixa [D, I, S, C].
+// O respondente ordena 1-4 sem repetir: 4 = mais se parece, 1 = menos se parece.
+export const GROUP_COUNT = 10;
+
+function group(id, D, I, S, C) {
+  return {
+    id,
+    options: [
+      { code: 'D', text: D },
+      { code: 'I', text: I },
+      { code: 'S', text: S },
+      { code: 'C', text: C }
+    ]
+  };
+}
+
+export const questionGroups = {
+  'pt-BR': [
+    group('g01', 'DIRECIONADO', 'INFLUENTE', 'ESTÁVEL', 'CUIDADOSO'),
+    group('g02', 'CONFIANTE', 'OTIMISTA', 'DECIDIDO', 'CONTIDO'),
+    group('g03', 'AVENTUREIRO', 'ENTUSIASMADO', 'PREVISÍVEL', 'LÓGICO'),
+    group('g04', 'DECISIVO', 'ABERTO', 'PACIENTE', 'ANALÍTICO'),
+    group('g05', 'DESAFIADOR', 'IMPULSIVO', 'EQUILIBRADO', 'PRECISO'),
+    group('g06', 'INCANSÁVEL', 'EMOTIVO', 'PROTETOR', 'CONTESTADOR'),
+    group('g07', 'COMPETITIVO', 'PERSUASIVO', 'ACOMODADO', 'CURIOSO'),
+    group('g08', 'ASSERTIVO', 'FALADOR', 'MODESTO', 'EDUCADO'),
+    group('g09', 'EXPERIMENTADOR', 'CHARMOSO', 'FÁCIL DE CONVIVER', 'CONSISTENTE'),
+    group('g10', 'RIGOROSO', 'SENSÍVEL', 'SINCERO', 'PERFECCIONISTA')
+  ],
+  'es-PY': [
+    group('g01', 'DIRECTO', 'INFLUYENTE', 'ESTABLE', 'CUIDADOSO'),
+    group('g02', 'SEGURO', 'OPTIMISTA', 'DECIDIDO', 'RESERVADO'),
+    group('g03', 'AVENTURERO', 'ENTUSIASTA', 'PREVISIBLE', 'LÓGICO'),
+    group('g04', 'DECISIVO', 'ABIERTO', 'PACIENTE', 'ANALÍTICO'),
+    group('g05', 'DESAFIANTE', 'IMPULSIVO', 'EQUILIBRADO', 'PRECISO'),
+    group('g06', 'INCANSABLE', 'EMOTIVO', 'PROTECTOR', 'CUESTIONADOR'),
+    group('g07', 'COMPETITIVO', 'PERSUASIVO', 'ACOMODADO', 'CURIOSO'),
+    group('g08', 'ASERTIVO', 'HABLADOR', 'MODESTO', 'EDUCADO'),
+    group('g09', 'EXPERIMENTADOR', 'CARISMÁTICO', 'FÁCIL DE CONVIVIR', 'CONSISTENTE'),
+    group('g10', 'RIGUROSO', 'SENSIBLE', 'SINCERO', 'PERFECCIONISTA')
+  ]
+};
+
+// Formato canônico: questionGroups. Não há alias legado.
+

@@ -436,6 +436,16 @@ footer small { color: var(--muted); font-size: 10px; }
 
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
 
+.rank-help { margin: 0 0 var(--space-4); color: var(--muted); font-size: 13px; line-height: 1.6; text-align: center; }
+.rank-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-height: 56px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: white; }
+.rank-row + .rank-row { margin-top: var(--space-2); }
+.rank-word { color: var(--navy); font-size: 14px; font-weight: 700; letter-spacing: .04em; }
+.rank-options { display: flex; gap: 8px; }
+.rank-choice { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 50%; cursor: pointer; font-weight: 700; font-size: 14px; color: var(--muted); }
+.rank-choice:has(input:checked) { border-color: var(--disc-c); background: var(--disc-c-soft); color: var(--navy); box-shadow: 0 8px 22px rgba(52, 120, 199, .12); }
+.rank-choice input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+#rank-error { margin-top: var(--space-3); }
+
 @media (max-width: 620px) {
   .topbar { padding: 18px 16px; }
   .brand span:last-child { display: none; }

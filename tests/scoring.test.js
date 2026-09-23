@@ -1,39 +1,49 @@
 import { describe, expect, it } from 'vitest';
 import { ASSESSMENT_ITEMS, scoreAssessment, buildProfile } from '../src/domain/assessment.js';
+import { GROUP_COUNT } from '../src/content/questions.js';
+
+const dominantD = Array.from({ length: GROUP_COUNT }, () => [4, 3, 2, 1]);
+const balanced = Array.from({ length: GROUP_COUNT }, (_, index) =>
+  index % 2 === 0 ? [4, 3, 2, 1] : [1, 2, 3, 4]
+);
 
 describe('canonical assessment', () => {
-  it('contains exactly six stable items per DISC dimension', () => {
-    expect(ASSESSMENT_ITEMS).toHaveLength(24);
-    expect(new Set(ASSESSMENT_ITEMS.map(({ id }) => id)).size).toBe(24);
-    for (const dimension of ['D', 'I', 'S', 'C']) {
-      expect(ASSESSMENT_ITEMS.filter((item) => item.dimension === dimension)).toHaveLength(6);
+  it('contains ten ipsative groups with fixed D/I/S/C options', () => {
+    expect(GROUP_COUNT).toBe(10);
+    expect(ASSESSMENT_ITEMS).toHaveLength(10);
+    expect(new Set(ASSESSMENT_ITEMS.map(({ id }) => id)).size).toBe(10);
+    for (const item of ASSESSMENT_ITEMS) {
+      expect(item.options.map((option) => option.dimension)).toEqual(['D', 'I', 'S', 'C']);
     }
   });
 });
 
 describe('scoreAssessment', () => {
   it('rejects incomplete answers so partial reports cannot be persisted', () => {
-    expect(() => scoreAssessment(Array(23).fill(2))).toThrow(/24/);
+    expect(() => scoreAssessment(Array(9).fill([4, 3, 2, 1]))).toThrow(/10/);
   });
 
   it.each([0, 5, 1.5, '4', null])('rejects invalid answer %s', (answer) => {
-    const answers = Array(24).fill(2);
-    answers[7] = answer;
+    const answers = dominantD.map((group) => [...group]);
+    answers[3][1] = answer;
     expect(() => scoreAssessment(answers)).toThrow(/1 a 4/);
   });
 
-  it('maps the real scale boundaries to 0 and 100 intensity', () => {
-    expect(scoreAssessment(Array(24).fill(1)).intensity).toEqual({ D: 0, I: 0, S: 0, C: 0 });
-    expect(scoreAssessment(Array(24).fill(4)).intensity).toEqual({ D: 100, I: 100, S: 100, C: 100 });
+  it('rejects groups that repeat a rank instead of using 1-4 once each', () => {
+    const answers = dominantD.map((group) => [...group]);
+    answers[0] = [4, 4, 2, 1];
+    expect(() => scoreAssessment(answers)).toThrow(/sem repetir/);
+  });
+
+  it('maps the ipsative scale boundaries to 0 and 100 intensity', () => {
+    const minMax = Array.from({ length: GROUP_COUNT }, () => [4, 1, 2, 3]);
+    expect(scoreAssessment(minMax).intensity).toEqual({ D: 100, I: 0, S: 33, C: 67 });
+    const inverse = Array.from({ length: GROUP_COUNT }, () => [1, 4, 3, 2]);
+    expect(scoreAssessment(inverse).intensity).toEqual({ D: 0, I: 100, S: 67, C: 33 });
   });
 
   it('normalizes the visible DISC composition to exactly 100 percent', () => {
-    const answers = ASSESSMENT_ITEMS.map((item, index) => {
-      if (item.dimension === 'D') return 4;
-      if (item.dimension === 'I') return index % 8 === 1 ? 3 : 2;
-      return item.dimension === 'S' ? 2 : 1;
-    });
-    const { composition } = scoreAssessment(answers);
+    const { composition } = scoreAssessment(dominantD);
 
     expect(Object.values(composition).reduce((sum, value) => sum + value, 0)).toBe(100);
     expect(composition.D).toBeGreaterThan(composition.I);
@@ -41,20 +51,27 @@ describe('scoreAssessment', () => {
     expect(composition.S).toBeGreaterThan(composition.C);
   });
 
-  it('uses an equal composition when no dimension rises above the response baseline', () => {
-    expect(scoreAssessment(Array(24).fill(1)).composition).toEqual({ D: 25, I: 25, S: 25, C: 25 });
+  it('uses an equal composition when every dimension totals the same raw sum', () => {
+    expect(scoreAssessment(balanced).composition).toEqual({ D: 25, I: 25, S: 25, C: 25 });
   });
 
-  it('represents a single fully expressed dimension as the whole composition', () => {
-    const answers = ASSESSMENT_ITEMS.map((item) => item.dimension === 'D' ? 4 : 1);
-    expect(scoreAssessment(answers).composition).toEqual({ D: 100, I: 0, S: 0, C: 0 });
+  it('caps a fully dominant dimension below 100 because ranks are forced trade-offs', () => {
+    // D=4 em todos os grupos; I/S/C dividem 1-3 em rotação: raw 40/20/20/20.
+    const answers = Array.from({ length: GROUP_COUNT }, (_, index) => {
+      const rest = [[1, 2, 3], [2, 3, 1], [3, 1, 2]][index % 3];
+      return [4, ...rest];
+    });
+    const { raw, composition } = scoreAssessment(answers);
+    expect(raw.D).toBe(40);
+    expect(Object.values(composition).reduce((sum, value) => sum + value, 0)).toBe(100);
+    expect(composition.D).toBeGreaterThan(40);
+    expect(composition.D).toBeLessThan(100);
   });
 
-  it('scores dimensions independently using canonical item metadata', () => {
-    const answers = ASSESSMENT_ITEMS.map((item) => item.dimension === 'D' ? 4 : 1);
-    expect(scoreAssessment(answers)).toMatchObject({
-      raw: { D: 24, I: 6, S: 6, C: 6 },
-      intensity: { D: 100, I: 0, S: 0, C: 0 },
+  it('scores dimensions from the fixed D/I/S/C column order', () => {
+    expect(scoreAssessment(dominantD)).toMatchObject({
+      raw: { D: 40, I: 30, S: 20, C: 10 },
+      intensity: { D: 100, I: 67, S: 33, C: 0 },
       ranking: ['D', 'I', 'S', 'C'],
       dominant: ['D'],
       isTie: false
@@ -62,10 +79,9 @@ describe('scoreAssessment', () => {
   });
 
   it('declares a top tie instead of silently choosing the first dimension', () => {
-    const answers = ASSESSMENT_ITEMS.map((item) => ['I', 'S'].includes(item.dimension) ? 4 : 1);
-    expect(scoreAssessment(answers)).toMatchObject({
-      ranking: ['I', 'S', 'D', 'C'],
-      dominant: ['I', 'S'],
+    expect(scoreAssessment(balanced)).toMatchObject({
+      ranking: ['D', 'I', 'S', 'C'],
+      dominant: ['D', 'I', 'S', 'C'],
       isTie: true
     });
   });
@@ -73,7 +89,7 @@ describe('scoreAssessment', () => {
 
 describe('buildProfile', () => {
   it.each(['pt-BR', 'es-PY'])('builds a localized primary and secondary corporate report for %s', (locale) => {
-    const scores = { raw: { D: 24, I: 18, S: 12, C: 6 }, intensity: { D: 100, I: 67, S: 33, C: 0 }, ranking: ['D', 'I', 'S', 'C'], dominant: ['D'], isTie: false };
+    const scores = { raw: { D: 40, I: 30, S: 20, C: 10 }, intensity: { D: 100, I: 67, S: 33, C: 0 }, ranking: ['D', 'I', 'S', 'C'], dominant: ['D'], isTie: false };
     const report = buildProfile(scores, locale);
     expect(report.primary.code).toBe('D');
     expect(report.secondary.code).toBe('I');

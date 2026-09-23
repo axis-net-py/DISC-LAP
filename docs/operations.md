@@ -44,3 +44,9 @@ Antes da remoção definitiva, confirme as obrigações legais e contratuais. Re
 ## Reversão
 
 Reimplante o commit anterior na Vercel. As migrações são aditivas; não apague a tabela durante rollback da aplicação. Confirme compatibilidade antes de qualquer alteração destrutiva no banco.
+
+## Questionário v3 (paridade com o manual)
+
+- 10 grupos ipsativos [D, I, S, C] com os adjetivos do PDF; cada grupo exige 1–4 sem repetir.
+- Sem migração de banco (`scores`/`profile` são `jsonb`); registros v2 continuam legíveis no painel, mas não são comparáveis 1:1.
+- Validação de fumaça pós-deploy: 1 submissão BR + 1 PY com 10 grupos válidos e 1 grupo com repetição rejeitado (400).

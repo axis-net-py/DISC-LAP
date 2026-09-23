@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { normalizePhone } from '../domain/phone.js';
 import { scoreAssessment, buildProfile } from '../domain/assessment.js';
+import { GROUP_COUNT } from '../content/questions.js';
+
+const ipsativeGroup = z.array(z.number().int().min(1).max(4)).length(4);
 
 const submissionSchema = z.object({
   idempotencyKey: z.string().min(8, 'idempotency inválida').max(100),
@@ -9,8 +12,18 @@ const submissionSchema = z.object({
   country: z.enum(['BR', 'PY']),
   locale: z.enum(['pt-BR', 'es-PY']),
   consent: z.literal(true, { error: 'consent é obrigatório' }),
-  answers: z.array(z.number().int().min(1).max(4)).length(24, 'São necessárias 24 respostas')
-}).strict();
+  answers: z.array(ipsativeGroup).length(GROUP_COUNT, `São necessários ${GROUP_COUNT} grupos`)
+}).strict().superRefine((data, ctx) => {
+  data.answers.forEach((group, groupIndex) => {
+    if (new Set(group).size !== 4) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['answers', groupIndex],
+        message: `O grupo ${groupIndex + 1} deve usar 1, 2, 3 e 4 sem repetir`
+      });
+    }
+  });
+});
 
 export class SubmissionError extends Error {
   constructor(code, message, status = 400) {
