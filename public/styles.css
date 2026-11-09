@@ -495,16 +495,32 @@ footer small { color: var(--muted); font-size: 10px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
 
 .rank-help {
-  margin: 0 0 var(--space-4);
-  color: #2c384a;
-  font-size: 15px;
+  margin: 0 auto var(--space-4);
+  max-width: 520px;
+  color: #334155;
+  font-size: 14px;
   font-weight: 500;
-  line-height: 1.6;
+  line-height: 1.5;
   text-align: center;
-  background: rgba(8, 24, 47, 0.04);
-  padding: 12px 16px;
+  background: rgba(8, 24, 47, 0.035);
+  padding: 10px 16px;
   border-radius: var(--radius-sm);
   border: 1px solid rgba(8, 24, 47, 0.08);
+}
+.rank-help strong {
+  color: var(--navy);
+  font-weight: 700;
+}
+.rank-help .rank-sep {
+  margin: 0 6px;
+  color: #94a3b8;
+}
+.rank-help .rank-note {
+  display: block;
+  color: #64748b;
+  font-size: 12.5px;
+  font-weight: 400;
+  margin-top: 3px;
 }
 .rank-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-height: 56px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: white; }
 .rank-row + .rank-row { margin-top: var(--space-2); }
@@ -527,7 +543,23 @@ footer small { color: var(--muted); font-size: 10px; }
   .field input, .field select { font-size: 16px; height: 48px; }
   .country-field, .phone-field { grid-column: 1; }
   .question-card { padding: 18px 12px; }
-  .rank-help { font-size: 14.5px; line-height: 1.55; padding: 12px 14px; margin-bottom: 16px; }
+  .rank-help {
+    font-size: 13px;
+    line-height: 1.45;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+  }
+  .rank-help .rank-line {
+    display: block;
+  }
+  .rank-help .rank-sep,
+  .rank-help .rank-break {
+    display: none;
+  }
+  .rank-help .rank-note {
+    font-size: 12px;
+    margin-top: 4px;
+  }
   .rank-row { padding: 10px 10px; gap: 8px; min-height: 50px; }
   .rank-word { font-size: 13px; line-height: 1.25; flex: 1 1 auto; min-width: 0; word-break: break-word; }
   .rank-options { gap: 5px; flex-shrink: 0; }
