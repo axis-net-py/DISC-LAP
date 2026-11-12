@@ -61,3 +61,50 @@ test('country choice overrides language default and invalid phones stay blocked'
   await expect(page.getByRole('alert')).toContainText(/paraguaio|9 dígitos/i);
   await expect(page.getByRole('heading', { name: /grupo/i })).toHaveCount(0);
 });
+
+test('shows red duplicate alert when repeating a number, allows deselecting, and clears group selections', async ({ page }) => {
+  await page.goto('/');
+  await page.getByLabel(/nome completo/i).fill('Carlos Silva');
+  await page.getByLabel(/whatsapp/i).fill('11999998888');
+  await page.getByLabel(/autorizo/i).check();
+  await page.getByRole('button', { name: /começar/i }).click();
+
+  const row0 = page.locator('.rank-row').nth(0);
+  const row1 = page.locator('.rank-row').nth(1);
+  const clearBtn = page.locator('#clear-selection');
+
+  await expect(clearBtn).toBeDisabled();
+
+  // Select 4 on row 0
+  await row0.locator('label.rank-choice', { hasText: '4' }).click();
+  await expect(row0.locator('input[value="4"]')).toBeChecked();
+  await expect(clearBtn).toBeEnabled();
+
+  // Attempt to repeat 4 on row 1 -> blocked + red conflict warning
+  const dupChoice = row1.locator('label.rank-choice', { hasText: '4' });
+  await dupChoice.click();
+  await expect(row1.locator('input[value="4"]')).not.toBeChecked();
+  await expect(row0.locator('input[value="4"]')).toBeChecked();
+  await expect(page.locator('#rank-error')).toBeVisible();
+  await expect(page.locator('#rank-error')).toContainText(/já escolheu o número 4/i);
+  await expect(dupChoice).toHaveClass(/is-conflict/);
+
+  // Toggle row 0 off by clicking 4 again
+  await row0.locator('label.rank-choice', { hasText: '4' }).click();
+  await expect(row0.locator('input[value="4"]')).not.toBeChecked();
+  await expect(clearBtn).toBeDisabled();
+
+  // Fill all 4 options, then clear the entire group using Limpar seleção
+  await row0.locator('label.rank-choice', { hasText: '4' }).click();
+  await row1.locator('label.rank-choice', { hasText: '3' }).click();
+  await page.locator('.rank-row').nth(2).locator('label.rank-choice', { hasText: '2' }).click();
+  await page.locator('.rank-row').nth(3).locator('label.rank-choice', { hasText: '1' }).click();
+  await expect(page.locator('#next')).toBeEnabled();
+
+  await clearBtn.click();
+  for (let i = 0; i < 4; i += 1) {
+    await expect(page.locator('.rank-row').nth(i).locator('input:checked')).toHaveCount(0);
+  }
+  await expect(clearBtn).toBeDisabled();
+  await expect(page.locator('#next')).toBeDisabled();
+});
